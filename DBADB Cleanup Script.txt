@@ -1,0 +1,360 @@
+-----------------------------------------DB_FileSizeData----------------------------------------------------------------------------------
+USE [DBADB]
+GO
+
+declare  @DB_FileSizeData TABLE(
+	[DBName] [varchar](100) NULL,
+	[File_Nmae] [varchar](200) NULL,
+	[Type] [varchar](100) NULL,
+	[Size_MB] [int] NULL,
+	[DB_TotalSize] [int] NULL,
+	[date] [datetime] NULL
+) 
+
+insert into @DB_FileSizeData
+SELECT [DBName]
+      ,[File_Nmae]
+      ,[Type]
+      ,[Size_MB]
+      ,[DB_TotalSize]
+      ,[date]
+  FROM [DBADB].[dbo].[DB_FileSizeData]
+  where date>getdate()-15
+
+  truncate table [DBADB].[dbo].[DB_FileSizeData]
+
+  insert into [DBADB].[dbo].[DB_FileSizeData]
+  select * from @DB_FileSizeData
+--------------------------------------------------------------------------CPUUtilisationdata TABLE------------------------------------------
+USE [DBADB]
+GO
+
+
+
+declare  @CPUUtilisationdata TABLE(
+	[Time] [datetime] NULL,
+	[IdleCPU] [int] NULL,
+	[SQLUtilisedCPU] [int] NULL,
+	[Otherprosses] [int] NULL
+) 
+
+insert into @CPUUtilisationdata
+SELECT [Time]
+      ,[IdleCPU]
+      ,[SQLUtilisedCPU]
+      ,[Otherprosses]
+  FROM [DBADB].[dbo].[CPUUtilisationdata]
+  where Time>getdate()-20
+
+  truncate table  [DBADB].[dbo].[CPUUtilisationdata]
+
+  insert into [DBADB].[dbo].[CPUUtilisationdata]
+  select * from @CPUUtilisationdata
+
+------------------------------------------------------------------------proceduredata----------------------------------------------------------------------------------------------------- 
+USE [DBADB]
+GO
+
+declare  @proceduredata TABLE(
+	[SPName] [varchar](100) NULL,
+	[DBName] [varchar](50) NULL,[object_id] [int] NULL,[type] [char](5) NULL,
+	[sql_handle] [varbinary](64) NULL,[plan_handle] [varbinary](64) NULL,
+	[cached_time] [datetime] NULL,[last_execution_time] [datetime] NULL,
+	[execution_count] [bigint] NULL,[total_worker_time] [bigint] NULL,
+	[last_worker_time] [bigint] NULL,[min_worker_time] [bigint] NULL,
+	[max_worker_time] [bigint] NULL,[total_physical_reads] [bigint] NULL,
+	[last_physical_reads] [bigint] NULL,[min_physical_reads] [bigint] NULL,
+	[max_physical_reads] [bigint] NULL,[total_logical_writes] [bigint] NULL,
+	[last_logical_writes] [bigint] NULL,[min_logical_writes] [bigint] NULL,
+	[max_logical_writes] [bigint] NULL,[total_logical_reads] [bigint] NULL,
+	[last_logical_reads] [bigint] NULL,[min_logical_reads] [bigint] NULL,
+	[max_logical_reads] [bigint] NULL,[total_elapsed_time] [bigint] NULL,
+	[last_elapsed_time] [bigint] NULL,[min_elapsed_time] [bigint] NULL,
+	[max_elapsed_time] [bigint] NULL
+) 
+
+insert into @proceduredata
+SELECT [SPName],[DBName] ,[object_id] ,[type]
+      ,[sql_handle],[plan_handle],[cached_time]
+      ,[last_execution_time],[execution_count]
+      ,[total_worker_time],[last_worker_time]
+      ,[min_worker_time],[max_worker_time]
+      ,[total_physical_reads],[last_physical_reads]
+      ,[min_physical_reads] ,[max_physical_reads]
+      ,[total_logical_writes],[last_logical_writes]
+      ,[min_logical_writes],[max_logical_writes]
+      ,[total_logical_reads],[last_logical_reads]
+      ,[min_logical_reads],[max_logical_reads]
+      ,[total_elapsed_time] ,[last_elapsed_time]
+      ,[min_elapsed_time] ,[max_elapsed_time]
+  FROM [DBADB1].[dbo].[proceduredata]
+  where last_execution_time>getdate()-30
+
+  truncate table [DBADB].[dbo].[proceduredata]
+
+  insert into [DBADB].[dbo].[proceduredata]
+  select * from @proceduredata
+
+--------------------------------------------------------PerfMonData-----------------------------------------------------------------------
+USE [DBADB]
+GO
+
+declare @PerfMonData TABLE (
+	[Counter] [nvarchar](770) NULL,
+	[Value] [decimal](38, 2) NULL,
+	[CaptureDate] [datetime] NULL
+) 
+
+insert into @PerfMonData
+SELECT [Counter]
+      ,[Value]
+      ,[CaptureDate]
+  FROM [DBADB1].[dbo].[PerfMonData]
+  where CaptureDate>getdate()-15
+
+truncate table [DBADB].[dbo].[PerfMonData]
+
+insert into [DBADB].[dbo].[PerfMonData]
+select * from @PerfMonData
+
+-------------------------------------------------------------------ErrorLogdata---------------------------------------------------------------------
+
+USE [DBADB]
+GO
+
+
+
+declare @ErrorLogdata TABLE(
+	[LogDate] [datetime] NULL,
+	[ProcessInfo] [varchar](30) NULL,
+	[ErrorMessage] [nvarchar](max) NULL
+) 
+
+insert into @ErrorLogdata
+SELECT  [LogDate]
+      ,[ProcessInfo]
+      ,[ErrorMessage]
+  FROM [DBADB].[dbo].[ErrorLogdata]
+  where [LogDate]>getdate()-15
+
+  truncate table [DBADB].[dbo].[ErrorLogdata]
+
+  insert into [DBADB].[dbo].[ErrorLogdata]
+  select * from @ErrorLogdata
+
+---------------------------------------------------------------------QueryStatData-----------------------------------------------------------------------
+USE [DBADB]
+GO
+
+
+
+declare @QueryStatData TABLE(
+	[dbid] [int] NULL,
+	[sql_handle] [varbinary](64) NULL,
+	[SQL_statement] [varchar](max) NULL,
+	[execution_count] [bigint] NULL,
+	[plan_generation_num] [bigint] NULL,
+	[last_execution_time] [datetime] NULL,
+	[last_worker_time] [bigint] NULL,
+	[last_physical_reads] [bigint] NULL,
+	[last_logical_writes] [bigint] NULL,
+	[last_elapsed_time] [bigint] NULL,
+	[last_rows] [bigint] NULL
+) 
+
+insert into @QueryStatData
+SELECT  [dbid]
+      ,[sql_handle]
+      ,[SQL_statement]
+      ,[execution_count]
+      ,[plan_generation_num]
+      ,[last_execution_time]
+      ,[last_worker_time]
+      ,[last_physical_reads]
+      ,[last_logical_writes]
+      ,[last_elapsed_time]
+      ,[last_rows]
+  FROM [DBADB].[dbo].[QueryStatData]
+  where [last_execution_time]>getdate()-15
+
+  truncate table [DBADB].[dbo].[QueryStatData]
+
+  insert into [DBADB].[dbo].[QueryStatData]
+  select * from @QueryStatData
+
+----------------------------------------------------------------------------JobHistoryDataCollection-------------------------------------------------------------------
+USE [DBADB]
+GO
+
+
+
+declare @JobHistoryDataCollection TABLE(
+	[Job Name] [varchar](200) NULL,
+	[Time Run] [datetime] NULL,
+	[Job Status] [varchar](100) NULL,
+	[Job Outcome] [varchar](100) NULL
+) 
+
+insert into @JobHistoryDataCollection
+SELECT [Job Name]
+      ,[Time Run]
+      ,[Job Status]
+      ,[Job Outcome]
+  FROM [DBADB].[dbo].[JobHistoryDataCollection]
+  where [Time Run]>getdate()-15
+
+  truncate table [DBADB].[dbo].[JobHistoryDataCollection]
+
+  insert into [DBADB].[dbo].[JobHistoryDataCollection]
+  select * from @JobHistoryDataCollection
+
+---------------------------------------------------------------------TableSizeData--------------------------------------------------------------------
+
+
+
+  USE [DBADB]
+GO
+
+declare @TableSizeData TABLE (
+	[DBID] [int] NULL,
+	[DBNAME] [varchar](100) NULL,
+	[TableName] [varchar](200) NULL,
+	[SchemaName] [varchar](100) NULL,
+	[rows] [bigint] NULL,
+	[TotalSpaceKB] [bigint] NULL,
+	[TotalSpaceMB] [float] NULL,
+	[UsedSpaceKB] [bigint] NULL,
+	[UsedSpaceMB] [float] NULL,
+	[UnusedSpaceKB] [bigint] NULL,
+	[UnusedSpaceMB] [float] NULL,
+	[Date] [datetime] NULL
+)
+insert into @TableSizeData
+SELECT  [DBID]
+      ,[DBNAME],[TableName]
+      ,[SchemaName],[rows]
+      ,[TotalSpaceKB],[TotalSpaceMB]
+      ,[UsedSpaceKB],[UsedSpaceMB]
+      ,[UnusedSpaceKB],[UnusedSpaceMB]
+      ,[Date] FROM [DBADB].[dbo].[TableSizeData]
+  where date>getdate()-15
+
+  truncate table [DBADB].[dbo].[TableSizeData]
+
+  insert into [DBADB].[dbo].[TableSizeData]
+  select * from @TableSizeData
+
+--------------------------------------------------------------------------WaitStatData--------------------------------------------------------------------------------
+
+USE [DBADB]
+GO
+declare  @WaitStatData TABLE(
+	[WaitType] [varchar](200) NULL,
+	[Wait_S] [decimal](16, 2) NULL,
+	[Signal_S] [decimal](16, 2) NULL,
+	[WaitCount] [bigint] NULL,
+	[Percentage] [decimal](5, 2) NULL,
+	[AverageWait_S] [decimal](16, 4) NULL,
+	[Date] [datetime] NULL
+) 
+
+insert into @WaitStatData
+SELECT [WaitType],[Wait_S]
+      ,[Signal_S],[WaitCount]
+      ,[Percentage],[AverageWait_S]
+      ,[Date]
+  FROM [DBADB].[dbo].[WaitStatData]
+  where date>getdate()-15
+
+  truncate table [DBADB].[dbo].[WaitStatData]
+
+  insert into [DBADB].[dbo].[WaitStatData]
+  select * from @WaitStatData
+
+----------------------------------------------------------SchemaChangesData-------------------------------------------------------------------------------------------------------------
+
+USE [DBADB]
+GO
+
+declare  @SchemaChangesData TABLE (
+	[DBID] [int] NULL,
+	[DBName] [varchar](30) NULL,
+	[LoginName] [varchar](40) NULL,
+	[Hostname] [varchar](30) NULL,
+	[AppName] [varchar](100) NULL,
+	[SPID] [int] NULL,
+	[StartTime] [datetime] NULL,
+	[EndTime] [datetime] NULL,
+	[EventClass] [bigint] NULL,
+	[EventDesc] [varchar](40) NULL,
+	[ObjectTpe] [bigint] NULL,
+	[ObjectTypeDesc] [varchar](60) NULL,
+	[ObjectID] [bigint] NULL,
+	[objectName] [varchar](100) NULL,
+	[EventSubClass] [int] NULL
+) 
+
+insert into @SchemaChangesData
+SELECT [DBID]
+      ,[DBName] ,[LoginName]
+      ,[Hostname] ,[AppName]
+      ,[SPID],[StartTime]
+      ,[EndTime],[EventClass]
+      ,[EventDesc],[ObjectTpe]
+      ,[ObjectTypeDesc],[ObjectID]
+      ,[objectName],[EventSubClass]
+  FROM [DBADB].[dbo].[SchemaChangesData]
+  where StartTime>getdate()-15
+
+  truncate table  [DBADB].[dbo].[SchemaChangesData]
+
+  insert into [DBADB].[dbo].[SchemaChangesData] 
+  select * from  @SchemaChangesData
+
+---------------------------------------------------------IndexFragData-------------------------------------------
+USE [DBADB]
+GO
+
+declare  @IndexFragData TABLE(
+	[DBName] [varchar](100) NULL,
+	[Schemaname] [varchar](100) NULL,
+	[Tablename] [varchar](200) NULL,
+	[Index_Desc] [varchar](200) NULL,
+	[Indexname] [varchar](200) NULL,
+	[FragPercentage] [float] NULL,
+	[IndexSizeKB] [bigint] NULL,
+	[page_count] [bigint] NULL,
+	[FragDate] [date] NULL
+)
+
+insert into @IndexFragData
+SELECT [DBName]
+      ,[Schemaname]
+      ,[Tablename]
+      ,[Index_Desc]
+      ,[Indexname]
+      ,[FragPercentage]
+      ,[IndexSizeKB]
+      ,[page_count]
+      ,[FragDate]
+  FROM [DBADB].[dbo].[IndexFragData]
+  where FragDate>getdate()-15
+
+  truncate table [DBADB].[dbo].[IndexFragData]
+
+  insert into [DBADB].[dbo].[IndexFragData]
+
+  select * from @IndexFragData
+
+
+
+
+
+
+
+
+
+
+
+
+
